@@ -1,9 +1,9 @@
 Xmas Wine Testing
 ================
 
-In genere, siamo convinti che il vino piú costa piú ci piacerá. Nel
-nostro caso i dati confermano un pó questa convinzione: c’e una
-correlazione positiva tra prezzo reale e giudizio del vino.
+In genere, siamo convinti che il vino piú costa piú ci piacerá. In
+questo caso i dati confermano un pó questa convinzione: c’é una
+correlazione tra il prezzo e il giudizio dato sul vino.
 
 ![](Analysis_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
