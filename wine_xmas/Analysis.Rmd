@@ -30,10 +30,10 @@ rating <- rating_raw %>%
 ```
 
 
-In genere, siamo convinti che il vino piú costa piú ci piacerá.
-In questo caso i dati confermano un pó questa convinzione: c'é una correlazione tra il prezzo e il giudizio dato sul vino.
+In genere, siamo convinti che il vino piú costa piú ci piacerá (figura a sinistra).
+In questo caso i dati confermano un pó questa convinzione: c'é una correlazione tra il vero prezzo e il giudizio dato sul vino (figura a destra).
 
-```{r, fig.width=8, fig.height=5}
+```{r, fig.width=6, fig.height=4}
 costpay1 <- rating %>%
   ggplot(aes(y=pay, x=grade)) +
   geom_boxplot(aes(group=grade)) +
@@ -59,9 +59,9 @@ ggpubr::ggarrange(plotlist = list(A=costpay1, B=costpay2),
 
 Chi é stato il migliore a indovinare il prezzo del vino?
 
-Il punteggio viene é determinato dalla media degli scarti tra il prezzo reale e quello indovinato (cioé vince chi ha fatto meno punti)
+Il punteggio é determinato dalla media degli scarti tra il prezzo reale e quello indovinato (cioé vince chi ha fatto meno punti)
 
-```{r, fig.width=8, fig.height=5}
+```{r, fig.width=6, fig.height=4}
 priceguess_rank <- rating %>% 
   mutate(diff = abs(pay - price),
          Nome=name)  %>% 
@@ -79,11 +79,11 @@ priceguess_rank %>%
 
 ```
 
-Ogni vino viene percipito piú o meno forte, giustamente, e ognuno traduce il grado percepito con una scala diversa.
+Ogni vino viene percipito piú o meno forte, giustamente, ma ognuno traduce il grado percepito con una scala diversa.
 
-(I punti rossi indicano il valore reale)
+(I puntini rossi indicano il valore reale)
 
-```{r}
+```{r, fig.width=6, fig.height=4}
 ethobyname <- rating %>%
   select(name, etoh, pay) %>%
   ggplot(aes(x=name, y=etoh)) +
@@ -91,12 +91,13 @@ ethobyname <- rating %>%
   geom_point(size=2, shape=21, position= position_dodge2(width = 0.5)) +
   theme_classic() +
   theme(axis.text.x = element_text(angle=45, hjust=1)) +
-  ggtitle("Grado percepito per sommelier")
+  ggtitle("Grado alcolico percepito per sommelier") +
+  labs(y="Grado alcolico percepito", x="")
 
 ethobyname
 ```
 
-```{r}
+```{r, fig.width=6, fig.height=4}
 ethobywine <- rating %>%
   select(wine_name, etoh, pay) %>%
   ggplot(aes(x=wine_name, y=etoh)) +
@@ -105,7 +106,9 @@ ethobywine <- rating %>%
   theme_classic()+
   theme(axis.text.x = element_text(angle=45, hjust=1)) +
   geom_point(data= labels, col="red", aes(x=wine_name, y=EtOH)) +
-  ggtitle("Grado percepito per vino")
+  ggtitle("Grado alcolico percepito per vino") +
+  labs(y="Grado alcolico percepito", x="")
+
 
 ethobywine
 ```
@@ -115,7 +118,7 @@ ethobywine
 La stessa cosa di prima, sul grado alcolico.
 (C'é chi non ci ha nemmeno provato su tutti i vini ed é stato escluso)
 
-```{r, fig.width=8, fig.height=5}
+```{r, fig.width=6, fig.height=4}
 ehohguess_rank <- rating %>% 
   transmute(diff = abs(etoh - EtOH),
          Nome=name) %>%
@@ -135,11 +138,11 @@ ehohguess_rank %>%
 
 ## Classifica dei vini 
 
-Come sono stati apprezzate le bottiglie in gara? E i vini (visto che 2 bottiglie erano identiche)
+Come sono state apprezzate le bottiglie in gara?
 
 I quadratini rossi indicano il giudizio medio.
 
-```{r, fig.width=8, fig.height=5}
+```{r, fig.width=6, fig.height=4}
 rating %>%
   ggplot(aes(y=grade, x= reorder(paste(wine_name, label), wine_name))) +
   geom_violin() +
@@ -152,19 +155,6 @@ rating %>%
   ggtitle("Giudizi sul vino per bottiglia")
 ```
 
-
-```{r, fig.width=8, fig.height=5}
-rating %>%
-  ggplot(aes(y=grade, x=wine_name)) +
-  geom_violin() +
-  geom_point(position=position_dodge2(width=.2), shape=21, alpha=.5, col="black", size=2) +
-  geom_point(size=2,shape=23, stat="summary", fill="red") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1),
-        text=element_text(size=12)) +
-  xlab("") +
-  ggtitle("Giudizi sul vino, per vino")
-```
 
 ```{r, eval=FALSE}
 # work clouds for wine descriptions
@@ -215,25 +205,27 @@ winner_wine <- rating %>%
 
 ```
 
-## Il vincitore indiscusso: `r winner_wine`` 
+## Il vincitore: `r winner_wine`` 
 
 Descritto dai nostri sommeliers come
 
 ![winner_wine](plots/wc_F.png)
 
 
-Questo invece illustra come ognuno é stato piú o meno largo di giudizi. C'é chi apprezza tutto, chi non si sbilancia mai, chi non giudica mai troppo duramente, ecc.
+Il prossimo grafico invece illustra come ognuno é stato piú o meno largo di giudizi. C'é chi apprezza tutto, chi non si sbilancia mai, chi non giudica mai troppo duramente, ecc.
 
-```{r, fig.width=8, fig.height=5}
+```{r, fig.width=6, fig.height=4}
 rating %>%
   ggplot(aes(y=grade, x= name)) +
   geom_violin(trim = T, scale = "count") +
-  geom_point(position=position_dodge2(width=.5), size=3, shape=21, aes(fill = wine_name), stat="identity") +
+  geom_point(position=position_dodge2(width=.5), 
+             size=3, shape=21,alpha=.5, 
+             aes(fill = wine_name), stat="identity") +
   geom_point(size=2, stat="summary", fill="red", shape=23, stroke=1) +
   theme_classic() +
   theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1),
         text=element_text(size=12)) +
-  xlab("") +
+  labs(x="", y="Giudizio") +
   ggtitle("Giudizi sul vino per sommelier")
 ```
 
@@ -241,7 +233,7 @@ rating %>%
 
 Chi é riuscito a indovinare i due vini identici? E chi invece li ha giudicati come completamente diversi?
 
-```{r, fig.width=8, fig.height=5}
+```{r, fig.width=6, fig.height=4}
 rating %>%
   filter(label %in% c("A","D")) %>% 
   group_by(name) %>% 
@@ -264,9 +256,9 @@ rating %>%
 
 Due vini possoso assomigliarsi, e allo stesso modo i gusti tra due persone.
 
-E queste simiglianze possono essere visualizzate, cosí:
+Queste simiglianze possono essere visualizzate, cosí:
 
-```{r, fig.width=8, fig.height=5}
+```{r, fig.width=6, fig.height=4}
 rating %>%
   select(name,label,grade, wine_name) %>%
   unite(wine_name, wine_name, label, sep= " ") %>%
