@@ -1,0 +1,272 @@
+---
+title: "Xmas Wine Testing"
+output: github_document
+---
+
+```{r setup, include=FALSE, echo=FALSE,message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+
+```{r}
+library(tidyverse)
+library("RColorBrewer")
+
+rating_raw <- readxl::read_xlsx("wine_rating.xlsx", "rating")
+sommeliers <- readxl::read_xlsx("wine_rating.xlsx", "sommeliers")
+labels <- readxl::read_xlsx("wine_rating.xlsx", "labels")
+
+rating <- rating_raw %>%
+  mutate(other = str_split(other, ",")) %>%
+  unnest(other) %>%
+  mutate(other= case_when(is.na(other) ~ "noother",
+                          T~other),
+           is_other = case_when(!is.na(other)~"1")) %>%
+  spread(other, is_other) %>%
+  select(-noother) %>%
+  left_join(labels) %>%
+  left_join(sommeliers)
+
+```
+
+
+## Correlazione tra prezzo e giudizio sul vino
+
+
+```{r, fig.width=6, fig.height=4}
+costpay1 <- rating %>%
+  ggplot(aes(y=pay, x=grade)) +
+  geom_boxplot(aes(group=grade)) +
+  geom_point(shape=21, size=3, position = position_dodge2(width = .5), aes(fill=wine_name), show.legend = T, alpha=.5) +
+  theme_classic() +
+  labs(y="Quanto credi che costa", x="quanto ti piace",fill="") +
+  geom_smooth(method="lm", col="gray", linetype="dashed", se=F)
+
+costpay2 <- rating %>%
+  ggplot(aes(y=discount_price, x=grade)) +
+  geom_boxplot(aes(group=grade)) +
+  geom_point(shape=21, size=3, position = position_dodge2(width = .5),
+             aes(fill=wine_name), alpha=.5) +
+  theme_classic() +
+  labs(y="Quanto veramente costa", x="quanto ti piace",fill="")+
+  geom_smooth(method="lm", col="gray", linetype="dashed", se=F)
+
+ggpubr::ggarrange(plotlist = list(A=costpay1, B=costpay2), 
+                  common.legend = T)
+
+```
+
+## Gara all'asta
+
+
+```{r, fig.width=6, fig.height=4}
+auction_rank <- rating %>% 
+  mutate(diff = pay - auction_sold,
+         Nome=name,
+         Punteggio = ifelse(diff>=0,auction_sold, 0))  %>% 
+  group_by(Nome) %>% 
+  summarise(Punteggio = sum(Punteggio)) %>% 
+  arrange(Punteggio)
+
+auction_rank %>% 
+  ggplot(aes(x=reorder(Nome, Punteggio), y=Punteggio)) +
+  geom_col(aes(fill=Punteggio), col="black", show.legend = F) +
+  theme_bw() +
+  scale_fill_continuous(type = "viridis") +
+  labs(x="") +
+  ggtitle("Indovina il prezzo!")
+
+```
+
+## Grado alcolico percepito
+
+```{r, fig.width=6, fig.height=4}
+ethobyname <- rating %>%
+  select(name, etoh) %>%
+  ggplot(aes(x=name, y=etoh)) +
+  geom_violin() +
+  geom_point(size=2, shape=21, position= position_dodge2(width = 0.5)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle=45, hjust=1)) +
+  ggtitle("Grado alcolico percepito per sommelier") +
+  labs(y="Grado alcolico percepito", x="")
+
+ethobyname
+```
+
+```{r, fig.width=6, fig.height=4}
+ethobywine <- rating %>%
+  select(wine_name, etoh, pay) %>%
+  ggplot(aes(x=wine_name, y=etoh)) +
+  geom_violin() +
+  geom_point(size=2, shape=21, position= position_dodge2(width = 0.5)) +
+  theme_classic()+
+  theme(axis.text.x = element_text(angle=45, hjust=1)) +
+  geom_point(data= labels, col="red", aes(x=wine_name, y=EtOH)) +
+  ggtitle("Grado alcolico percepito per vino") +
+  labs(y="Grado alcolico percepito", x="")
+
+
+ethobywine
+```
+
+## Indovina il grado alcolico!
+
+
+```{r, fig.width=6, fig.height=4}
+ehohguess_rank <- rating %>% 
+  transmute(diff = abs(etoh - EtOH),
+         Nome=name) %>%
+  group_by(Nome) %>% 
+  summarise(Punteggio = mean(diff)) %>% 
+  arrange(Punteggio) %>% 
+  filter(!is.na(Punteggio))
+
+ehohguess_rank %>% 
+  ggplot(aes(x=reorder(Nome, Punteggio), y=Punteggio)) +
+  geom_col(aes(fill=Punteggio), col="black", show.legend = F) +
+  theme_bw() +
+  scale_fill_continuous(type = "viridis", trans = 'reverse') +
+  labs(x="", y="errore") +
+  ggtitle("Indovina il grado alcolico!")
+```
+
+## Classifica dei vini 
+
+```{r, fig.width=6, fig.height=4}
+vino_rating_bottle <- rating %>%
+  ggplot(aes(y=grade, x= reorder(paste(wine_name, label), wine_name))) +
+  geom_violin() +
+  geom_point(position=position_dodge2(width=.2), shape=21, alpha=.5, col="black", size=2, aes(fill=name)) +
+  geom_point(size=2,shape=23, stat="summary", fill="red") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1),
+        text=element_text(size=12)) +
+  xlab("") + ylab("rating") +
+  ggtitle("Giudizi sul vino per bottiglia")
+
+vino_rating_bottle
+```
+
+
+```{r, eval=FALSE}
+# word clouds for wine descriptions
+description_words <- c("")
+
+description_df <- rating %>%
+  select(name, wine_name,label, all_of(description_words)) %>%
+  gather(adjective, value, all_of(description_words)) %>%
+  filter(!is.na(value)) %>%
+  select(-value)
+
+for (labelx in unique(description_df$label)) {
+  description_by_wine <- description_df %>%
+    filter(label==labelx) %>%
+    group_by(adjective) %>%
+    summarise(n=n()) %>% ungroup() %>%
+    mutate(freq=n/sum(n))
+
+  png(paste0("plots/wc_",labelx,".png"), width = 15, height = 15, units = "cm", res=300)
+  
+  wordcloud::wordcloud(words = description_by_wine$adjective, 
+                       freq = description_by_wine$n, 
+                       min.freq = 0, 
+                       random.order=F,
+                       random.color =F,
+                       max.words =50,
+                       scale = c(5,1),
+                       rot.per = 0.35,
+                       colors=brewer.pal(9, "Reds"),
+                       ordered.colors =F)
+  
+  dev.off()
+}
+```
+
+
+```{r}
+winner_wine <- rating %>% 
+  group_by(wine_name) %>% 
+  summarise(grade=mean(grade)) %>% 
+  arrange(desc(grade)) %>% 
+  slice(1) %>% 
+  pull(wine_name)
+
+```
+
+## Il vincitore: `r winner_wine`` 
+
+![winner_wine](plots/wc_F.png)
+
+```{r, fig.width=6, fig.height=4}
+rating_per_sommelier <- rating %>%
+  ggplot(aes(y=grade, x= name)) +
+  geom_violin(trim = T, scale = "count") +
+  geom_point(position=position_dodge2(width=.5), 
+             size=3, shape=21,alpha=.5, 
+             aes(fill = wine_name), stat="identity") +
+  geom_point(size=2, stat="summary", fill="red", shape=23, stroke=1) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1),
+        text=element_text(size=12)) +
+  labs(x="", y="Giudizio") +
+  ggtitle("Giudizi sul vino per sommelier")
+
+rating_per_sommelier
+```
+
+## Indivona il doppione
+
+```{r, fig.width=6, fig.height=4}
+paired_wines_rating <- rating %>%
+  filter(label %in% c("A","D","F","G")) %>% 
+  mutate(pair = ifelse(label %in% c("A","D"),"A-D","F-G")) %>% 
+  group_by(name, pair) %>% 
+  summarise(min=min(grade), max=max(grade)) %>% 
+  ggplot(aes(col=pair,x= reorder(name, abs(min-max)), y=min, yend=max, xend=name)) +
+  geom_segment(size=2, position = position_dodge2(width = .2)) +
+  geom_point(aes(y=min), position = position_dodge2(width = .2),
+             size=3, stat="identity") +
+  geom_point(aes(y=max), position = position_dodge2(width = .2),
+             size=3, stat="identity") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1),
+        text=element_text(size=12)) +
+  labs(y="Giduzio", x="") +
+  ggtitle("Giudizio sulle bottiglie identiche") +
+  scale_y_continuous(limits = c(1,5))
+
+paired_wines_rating
+```
+
+## Similaritá tra vini e tra sommeliers
+
+```{r, fig.width=6, fig.height=4}
+heapmap <- rating %>%
+  select(name,label,grade, wine_name) %>%
+  unite(wine_name, wine_name, label, sep= " ") %>%
+  spread(wine_name, grade) %>%
+  column_to_rownames("name") %>%
+  as.matrix() %>% t() %>%
+  scale(center = F, scale = F) %>%
+  pheatmap::pheatmap()
+
+heapmap
+```
+
+
+
+## other stuff
+
+```{r, eval=F}
+## Altre analisi poco interessanti
+
+# people ratings over time
+rating %>%
+  ggplot(aes(x=order, y=grade)) +
+  geom_jitter(shape=21, size=3) +
+  theme_classic() +
+  scale_x_continuous(breaks = unique(rating$order %>% na.omit())) +
+  ggtitle("it does get better with drinking") +
+  geom_smooth(method="lm", col="gray", linetype="dashed", se=F)
+```
