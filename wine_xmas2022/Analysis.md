@@ -25,7 +25,7 @@ Xmas Wine Testing
 
 ## Il vincitore: Brunello Cecchi\`
 
-![winner_wine](plots/wc_F.png)
+![winner_wine](plots/wc_Cabreo%20Il%20Borgo.png)
 
 ![](Analysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 

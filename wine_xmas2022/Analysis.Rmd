@@ -151,7 +151,15 @@ vino_rating_bottle
 
 ```{r, eval=FALSE}
 # word clouds for wine descriptions
-description_words <- c("")
+description_words <- c("acerbo", "acido", "acquoso", "amabile", "amaro", "amarognolo",
+                       "aspro", "atringente", "austero", "complesso", "cremoso", "diluito", 
+                       "dolce", "fine", "forte", "insapore", "insipido", "legnoso", 
+                       "morbido", "robusto", "rotondo", "salato", "sapido", "secco", 
+                       "vecchio", "vinoso", "vivace", "agrumato", "aromatico", "erbaceo", 
+                       "floreale", "fruttato", "profumato", "puzzolente", "ripugnante", 
+                       "speziato", "tanfoso")
+
+
 
 description_df <- rating %>%
   select(name, wine_name,label, all_of(description_words)) %>%
@@ -159,9 +167,9 @@ description_df <- rating %>%
   filter(!is.na(value)) %>%
   select(-value)
 
-for (labelx in unique(description_df$label)) {
+for (labelx in unique(description_df$wine_name)) {
   description_by_wine <- description_df %>%
-    filter(label==labelx) %>%
+    filter(wine_name==labelx) %>%
     group_by(adjective) %>%
     summarise(n=n()) %>% ungroup() %>%
     mutate(freq=n/sum(n))
@@ -196,7 +204,7 @@ winner_wine <- rating %>%
 
 ## Il vincitore: `r winner_wine`` 
 
-![winner_wine](plots/wc_F.png)
+![winner_wine](plots/wc_Cabreo\ Il\ Borgo.png)
 
 ```{r, fig.width=6, fig.height=4}
 rating_per_sommelier <- rating %>%
