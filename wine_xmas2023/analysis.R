@@ -263,6 +263,6 @@ heatmap <- results %>%
 ggsave(plot = heatmap,
        filename = "heatmap.png",
        path = "wine_xmas2023/plots/", 
-       width =16,height = 18,
+       width =10,height = 12,
        units = "cm",
        device = "png")
