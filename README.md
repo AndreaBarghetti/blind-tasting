@@ -1,6 +1,6 @@
 # Blind Tasting
 
-[Nutella]('')
+[Nutella](./nutella%20blind%20tests)
 
 [My Bday 2020](./wine_birthday) (red wine)
 
