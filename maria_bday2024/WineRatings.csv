@@ -1,0 +1,78 @@
+Name,Order,Wine,Description,Rating,Offer,Alcohol Percentage,Country
+Andrea B,1,G,D,5,150,13,South Africa
+Andrea B,2,A,A,2,40,14,Italy
+Andrea B,3,B,C,1,35,10,Austria
+Andrea B,4,D,A,2,40,14,Italy
+Andrea B,5,C,E,4,80,13,Germany
+Andrea B,6,F,D,3,60,13.5,USA
+Andrea B,7,E,F,1,40,12.5,France
+Maria,1,B,C,4,75,10,Austria
+Maria,2,C,E,3,130,12,France
+Maria,3,E,A,2,40,12,Italy
+Maria,4,F,F,5,200,13.5,South Africa
+Maria,5,G,D,5,200,12,Italy
+Maria,6,A,B,1,30,13,USA
+Maria,7,D,E,2,40,12,Germany
+Andrea D,1,A,A,2,5,11,Germany
+Andrea D,2,D,E,4,150,12,Austria
+Andrea D,3,F,F,4,300,14,South Africa
+Andrea D,4,C,C,4,200,,France
+Andrea D,5,E,D,2,50,13,USA
+Andrea D,6,B,B,3,40,10,Italy
+Andrea D,7,G,F,4,300,,
+Rosa,1,E,B,3,65,12,France
+Rosa,2,B,C,1,18,13.5,Germany
+Rosa,3,D,A,2,75,13,Germany
+Rosa,4,A,C,1,18,13.5,Germany
+Rosa,5,C,E,3,60,14,South Africa
+Rosa,6,G,D,3,65,,USA
+Rosa,7,F,F,4,80,12.9,Italy
+Alvaro,1,G,C,4,70,12,Italy
+Alvaro,2,F,B,3,50,12,South Africa
+Alvaro,2,C,D,1,0,11,USA
+Alvaro,4,A,A,3,40,11,France
+Alvaro,5,B,C,4,70,10,Germany
+Alvaro,7,E,A,3,65,10,Austria
+Alvaro,6,D,A,3,40,11,Austria
+Ana,1,F,C,4,75,16,France
+Ana,2,C,A,1,5,19,USA
+Ana,3,A,E,4,95,12,Italy
+Ana,4,B,F,5,125,14,South Africa
+Ana,5,D,D,3,75,12,South Africa
+Ana,6,E,B,2,25,13,Austria
+Ana,7,G,C,3,80,10,Germany
+Oli,1,C,A,3,100,12,Germany
+Oli,2,A,C,2,60,14,South Africa
+Oli,3,E,E,4,120,13,USA
+Oli,4,F,D,5,200,13.5,Italy
+Oli,5,G,B,4,150,12.5,France
+Oli,6,D,C,3,50,14,South Africa
+Oli,7,B,F,5,200,12.5,Austria
+Karen F,1,F,D,4,150,12,USA
+Karen F,2,D,A,2,30,13,Germany
+Karen F,3,C,E,1,10,14,South Africa
+Karen F,4,B,C,4,100,10,Italy
+Karen F,5,E,F,3,50,10,Austria
+Karen F,6,A,B,3,50,10,France
+Karen F,7,G,D,4,150,12,USA
+Karen A,1,E,E,3,45,12.5,France
+Karen A,2,G,F,3,60,13,South Africa
+Karen A,3,B,C,4,50,11,USA
+Karen A,4,A,D,4,55,11,Italy
+Karen A,5,C,B,3,40,12,France
+Karen A,6,F,D,4,60,11,Italy
+Karen A,7,D,D,4,55,11,Germany
+Sirin,1,G,F,3,30,12,Germany
+Sirin,2,B,C,2,10,14,Austria
+Sirin,3,D,B,4,90,12,France
+Sirin,4,E,B,5,120,12,France
+Sirin,5,C,C,3,50,14,South Africa
+Sirin,6,A,A,2,10,12,USA
+Sirin,7,F,D,3,60,14,Italy
+Axel,1,B,C,5,110,11.2,France
+Axel,2,A,B,3,89,12.4,Germany
+Axel,3,G,F,2,80,12,USA
+Axel,4,D,A,3,69,12.8,Italy
+Axel,5,F,E,1,59,12.2,Austria
+Axel,6,E,D,2,79,12.4,France
+Axel,7,C,D,2,59,12.4,France
