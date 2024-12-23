@@ -2,7 +2,9 @@
 
 [Nutella](./nutella%20blind%20tests)
 
-[My Bday 2020](./wine_birthday) (red wine)
+[My Bday 2021](./wine_birthday) (red wine)
+
+[Natale 2021](./wine_xmas/Analysis.md)
 
 [Natale 2022](./wine_xmas2022/Analysis.md) (red wine)
 
